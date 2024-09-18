@@ -6,8 +6,13 @@ const path = require('path');
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
-// Serve static files (HTML, CSS, JS)
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files (CSS and JS) from the 'public' directory
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// Serve the main HTML file
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Helper function to read and write JSON data
 const readData = () => {
@@ -44,15 +49,15 @@ app.post('/upload', upload.single('file'), (req, res) => {
     res.json({ message: 'File uploaded successfully.' });
 });
 
-// Serve the HTML file
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 // Endpoint to list videos
 app.get('/videos', (req, res) => {
     const data = readData();
     res.json(data.files);
+});
+
+// Run server
+app.listen(3000, () => {
+    console.log('Server running on http://localhost:3000');
 });
 
 // Run server
